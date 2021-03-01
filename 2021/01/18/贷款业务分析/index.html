@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>
+        CWHBlog
+    </title>
+    
+<link rel="stylesheet" href="/libs/highlight/styles/monokai-sublime.css">
+
+    
+<link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body id="bodyx">
+    <div class="hd posts">
+    <a href="/index.html"><i class="fa fa-reply replay-btn" aria-hidden="true"></i></a>
+    <div class="post-title">
+        <p>
+            贷款业务需求分析
+        </p>
+        <hr>
+    </div>
+    <div class="post-content">
+        <h2 id="未经作者授权禁止转载-作者：Chaierss-https-aishanshan-vip"><a href="#未经作者授权禁止转载-作者：Chaierss-https-aishanshan-vip" class="headerlink" title="未经作者授权禁止转载 作者：Chaierss https://aishanshan.vip"></a>未经作者授权禁止转载 作者：Chaierss <a target="_blank" rel="noopener" href="https://aishanshan.vip/">https://aishanshan.vip</a></h2><h2 id="什么是资产业务？"><a href="#什么是资产业务？" class="headerlink" title="什么是资产业务？"></a>什么是资产业务？</h2><p>资产业务指银行将自己<strong>通过负债业务所聚集的货币资金加以运用</strong>的业务；<br>是银行业务取得效益的途径，是创造利润的渠道；<br>而贷款业务，是银行主营资产业务的主要业务，也是监管统计重点关注的业务；  </p>
+<h2 id="贷款业务有哪些"><a href="#贷款业务有哪些" class="headerlink" title="贷款业务有哪些"></a>贷款业务有哪些</h2><p>贷款的主要业务；<br>按一般统计口径，贷款可分为对公贷款和个人贷款；  </p>
+<p>1.对公贷款：单位经营贷款、固定贷款、并购贷款、项目贷款、福费廷、贸易融资、垫款、票据贴现等<br>2.个人贷款：个人经营性贷、个人消费贷；<br>其中个人消费贷按用途又分住房、汽车、助学等  </p>
+<h2 id="涉及哪些源系统"><a href="#涉及哪些源系统" class="headerlink" title="涉及哪些源系统"></a>涉及哪些源系统</h2><p>核心系统、<strong>贷款系统</strong>、票据系统、直销银行、国结系统、押品系统、第三方平台  </p>
+<p><strong>核心系统</strong>：可以获取相关余额信息；<br>走账通过核心去放贷回收以及相关利息计算等等；<br>贷款的科目相关信息；<br>贷款系统：信贷系统<br>票据系统：票据贴现<br>直销银行：线上贷款，交易系统<br>国结系统：贸易融资（信贷找不到就在这里）<br>押品系统：结合进行数据分析<br>第三方平台：网商贷：微信，花呗，京东等等等（<strong>一般以文献信息推送 数仓</strong>）  </p>
+<h2 id="怎么去做需求分析"><a href="#怎么去做需求分析" class="headerlink" title="怎么去做需求分析"></a>怎么去做需求分析</h2><p>贷款统计相关表：  </p>
+<p><img src="/images/%E8%B4%B7%E6%AC%BE%E7%BB%9F%E8%AE%A1%E7%9B%B8%E5%85%B3%E8%A1%A8/%E8%B4%B7%E6%AC%BE%E7%BB%9F%E8%AE%A1%E7%9B%B8%E5%85%B3%E8%A1%A8.png" alt="这是图片" title="贷款统计相关表"></p>
+<p>贷款申请：累积申请户数；一般从授信表中接统计和服务数<br>主要关注：申请时间和申请余额<br>授信协议：授信额度；客户（产品）授信，授信的维度不一样<br>贷款合同：合同金的统计 放款金额 终止时间 一般用途是什么<br>投向哪个行业 还款方式是什么 精准利率 执行利率 是不是绿色信贷  </p>
+<p>统计比较多的 就是贷款借据 <strong>统计相关信息一般是从贷款合同表中取到<br>还款计划 数据量一般比较大 银行一般没有专门建表</strong>  </p>
+<h2 id="重点关注信息有哪些"><a href="#重点关注信息有哪些" class="headerlink" title="重点关注信息有哪些"></a>重点关注信息有哪些</h2><p>贷款维度的统计；  </p>
+<p>对贷款明细的划分；  </p>
+<p>核对方式：总分核对；内部帐；</p>
+<h3 id="喜欢作者的可以扫描一下二维码加作者微信"><a href="#喜欢作者的可以扫描一下二维码加作者微信" class="headerlink" title="喜欢作者的可以扫描一下二维码加作者微信"></a>喜欢作者的可以扫描一下二维码加作者微信</h3><h3 id="本文作者记录笔记心得，如有错误欢迎指正"><a href="#本文作者记录笔记心得，如有错误欢迎指正" class="headerlink" title="本文作者记录笔记心得，如有错误欢迎指正"></a>本文作者记录笔记心得，如有错误欢迎指正</h3><p><img src="/images/%E5%BE%AE%E4%BF%A1.jpg" alt="这是图片" title="作者微信">  </p>
+
+    </div>
+
+    
+</div>
+    <div class="footer" id="footer">
+    <p>Copyright © 2021 <a class="flink" href="https://github.com/sanjinhub/hexo-theme-geek">Geek</a>.
+        <label class="el-switch el-switch-green el-switch-sm" style="vertical-align: sub;">
+            <input type="checkbox" name="switch" id="update_style">
+            <span class="el-switch-style"></span>
+        </label>
+        <script type="text/javascript">document.write(unescape("%3Cspan id='cnzz_stat_icon_1279632668'%3E%3C/span%3E%3Cscript src='https://v1.cnzz.com/z_stat.php%3Fid%3D1279632668%26online%3D1%26show%3Dline' type='text/javascript'%3E%3C/script%3E"));</script>
+    </p>
+</div>
+<input type="hidden" id="web_style" value="black">
+<input type="hidden" id="valine_appid" value="">
+<input type="hidden" id="valine_appKey" value="">
+
+<script src="/libs/jquery.min.js"></script>
+
+
+<script src="/libs/highlight/highlight.pack.js"></script>
+
+<script src='//cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+
+<script src="/js/js.js"></script>
+
+<style type="text/css">
+.v * {
+    color: #698fca;
+}
+
+.v .vlist .vcard .vhead .vsys {
+    color: #3a3e4a;
+}
+
+.v .vlist .vcard .vh .vmeta .vat {
+    color: #638fd5;
+}
+
+.v .vlist .vcard .vhead .vnick {
+    color: #6ba1ff;
+}
+
+.v a {
+    color: #8696b1;
+}
+
+.v .vlist .vcard .vhead .vnick:hover {
+    color: #669bfc;
+}
+</style>
+</body>
+
+</html>
