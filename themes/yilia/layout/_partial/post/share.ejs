@@ -1,0 +1,26 @@
+<%
+  var sUrl = url.replace(/index\.html$/, '');
+  sUrl = /^(http:|https:)\/\//.test(sUrl) ? sUrl : 'http:' + sUrl;
+%>
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <br>
+          <br>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="mask js-mask"></div>
