@@ -1,35 +1,260 @@
-extends includes/layout.pug
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Linux操作系统概述 | Chaierss's Blog</title><noscript>开启JavaScript才能访问本站哦~</noscript><link rel="icon" href="/img/pwa/favicon.png"><link rel="stylesheet" href="/css/index.css?v=3.0.21"><link rel="canonical" href="https://www.chaierss.top/posts/f24bb437.html"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css"><!-- Feature-specific CSS--><!-- aplayer--><!-- swiper--><!-- fancybox ui--><!-- katex--><!-- Open Graph--><meta name="description" content="前言 Linux操作系统学习笔记 一、操作系统概念与分类 操作系统概念 操作系统（Operating System，简称OS）是管理计算机硬件与软件资源的程序，需要处理如：管理与配置内存、决定系统资源供需的优先次序、控制输入设备与输出设备、操作网络与管理文件系统等基本事务；没有操作系统的机器称"><!-- pwa--><meta name="apple-mobile-web-app-capable" content="Chaierss's Blog"><meta name="theme-color" content="var(--efu-main)"><meta name="apple-mobile-web-app-status-bar-style" content="var(--efu-main)"><link rel="bookmark" href="/img/pwa/favicon.png"><link rel="apple-touch-icon" href="/img/pwa/favicon.png" sizes="180x180"><script>console.log(' %c Solitude %c ' + '3.0.21' + ' %c https://github.com/everfu/hexo-theme-solitude',
+    'background:#35495e ; padding: 1px; border-radius: 3px 0 0 3px;  color: #fff',
+    'background:#ff9a9a ; padding: 1px; border-radius: 0 3px 3px 0;  color: #fff',
+    'background:unset ; padding: 1px; border-radius: 0 3px 3px 0;  color: #fff')
+</script><script>(()=>{
+        const saveToLocal = {
+            set: function setWithExpiry(key, value, ttl) {
+                if (ttl === 0)
+                    return
+                const now = new Date()
+                const expiryDay = ttl * 86400000
+                const item = {
+                    value: value,
+                    expiry: now.getTime() + expiryDay
+                }
+                localStorage.setItem(key, JSON.stringify(item))
+            },
+            get: function getWithExpiry(key) {
+                const itemStr = localStorage.getItem(key)
 
-block content
-    main.layout#content-inner
-        #post
-            if page.not_cover
-                include includes/widgets/post/postInfo
-            article.post-content#article-container
-                if theme.post_ai.enable && page.ai
-                    include includes/widgets/post/post-ai
-                != page.content
-            include includes/widgets/post/copyright
-            .post-tools-right
-                .tag_share
-                    .post-meta__tag-list
-                        each data in page.tags.data
-                            a(href=url_for(data.path)).post-meta__tags
-                                span.tags-punctuation
-                                    i.solitude.fa-solid.fa-hashtag
-                                    =data.name
-                                    span.tagsPageCount=data.length
-            if theme.google_adsense.enable && !theme.google_adsense.auto_ads && theme.google_adsense.post_content
-                div.google-ads-warp
-                    ins.adsbygoogle(style="display:block; text-align:center; height:284px", data-ad-layout="in-article", data-ad-format="fluid", hide-unfilled="true", data-ad-client=theme.google_adsense.client, data-ad-slot=theme.google_adsense.slot)
-                    script.
-                        (adsbygoogle = window.adsbygoogle || []).push({});
-            if site.posts.length > 1
-                include includes/widgets/post/postNav
-            if theme.related_post.enable
-                != related_posts(page, site.posts)
-            if page.comment
-                - var comment_js = true
-                include includes/widgets/third-party/comments/comment
-        if page.aside
-            include includes/widgets/aside/aside<script>const posts=["posts/ab365873.html","posts/9932f168.html","posts/bfd22fc2.html","posts/c5196243.html","posts/f24bb437.html","posts/d0656d0a.html","posts/ed202b4f.html","posts/1f61ca53.html","posts/bc8f3be9.html","posts/9efe5c67.html","posts/bedcf5a.html","posts/cef07fa1.html","posts/6429c849.html","posts/790bb422.html","posts/58475bac.html"];function toRandomPost(){ pjax.loadUrl(GLOBAL_CONFIG.root+posts[Math.floor(Math.random()*posts.length)]); }</script>
+                if (!itemStr) {
+                    return undefined
+                }
+                const item = JSON.parse(itemStr)
+                const now = new Date()
+
+                if (now.getTime() > item.expiry) {
+                    localStorage.removeItem(key)
+                    return undefined
+                }
+                return item.value
+            }
+        };
+        window.utils = {
+            saveToLocal: saveToLocal,
+            getCSS: (url, id = false) => new Promise((resolve, reject) => {
+              const link = document.createElement('link')
+              link.rel = 'stylesheet'
+              link.href = url
+              if (id) link.id = id
+              link.onerror = reject
+              link.onload = link.onreadystatechange = function() {
+                const loadState = this.readyState
+                if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+                link.onload = link.onreadystatechange = null
+                resolve()
+              }
+              document.head.appendChild(link)
+            }),
+            getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+              const script = document.createElement('script')
+              script.src = url
+              script.async = true
+              script.onerror = reject
+              script.onload = script.onreadystatechange = function() {
+                const loadState = this.readyState
+                if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+                script.onload = script.onreadystatechange = null
+                resolve()
+              }
+
+              Object.keys(attr).forEach(key => {
+                script.setAttribute(key, attr[key])
+              })
+
+              document.head.appendChild(script)
+            }),
+            addGlobalFn: (key, fn, name = false, parent = window) => {
+                const globalFn = parent.globalFn || {}
+                const keyObj = globalFn[key] || {}
+
+                if (name && keyObj[name]) return
+
+                name = name || Object.keys(keyObj).length
+                keyObj[name] = fn
+                globalFn[key] = keyObj
+                parent.globalFn = globalFn
+            },
+            addEventListenerPjax: (ele, event, fn, option = false) => {
+              ele.addEventListener(event, fn, option)
+              utils.addGlobalFn('pjax', () => {
+                  ele.removeEventListener(event, fn, option)
+              })
+            },
+            diffDateFormat: (selector) => {
+                selector.forEach(item => {
+                    const date = new Date(item.getAttribute('datetime') || item.textContent);
+                    item.textContent = (date.getMonth() + 1).toString()+'/'+date.getDate().toString();
+                });
+            },
+        }
+    })()</script><!-- theme--><script>initTheme = () => {
+    let isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const cachedMode = utils.saveToLocal.get('theme');
+    if (cachedMode === undefined) {
+        const nowMode =
+            isDarkMode ? 'dark' : 'light'
+        document.documentElement.setAttribute('data-theme', nowMode);
+    } else {
+        document.documentElement.setAttribute('data-theme', cachedMode);
+    }
+    typeof rm === 'object' && rm.mode(cachedMode === 'dark' && isDarkMode)
+}
+initTheme()</script><script>const GLOBAL_CONFIG = {
+    root: '/',
+    algolia: undefined,
+    localsearch: undefined,
+    runtime: '2023-04-20 00:00:00',
+    lazyload: {
+        enable: false,
+        error: '/img/error_load.avif'
+    },
+    copyright: false,
+    highlight: {"limit":200,"expand":true,"copy":true,"syntax":"highlight.js"},
+    randomlink: false,
+    lang: {"theme":{"dark":"已切换至深色模式","light":"已切换至浅色模式"},"copy":{"success":"复制成功","error":"复制失败"},"backtop":"返回顶部","time":{"day":"天前","hour":"小时前","just":"刚刚","min":"分钟前","month":"个月前"},"day":" 天","f12":"开发者模式已打开，请遵循GPL协议。","totalk":"无需删除空行，直接输入评论即可"},
+    aside: {
+        state: {
+            morning: "✨ 早上好，新的一天开始了",
+            noon: "🍲 午餐时间",
+            afternoon: "🌞 下午好",
+            night: "早点休息",
+            goodnight: "晚安 😴",
+        },
+        witty_words: [],
+        witty_comment: {
+            prefix: '好久不见，',
+            back: '欢迎再次回来，',
+        },
+    },
+    covercolor: {
+        enable: false
+    },
+    comment: false,
+    lightbox: 'null',
+    right_menu: false,
+    translate: {"translateDelay":0,"defaultEncoding":2},
+    lure: false,
+    expire: false,
+};</script><script id="config-diff">var PAGE_CONFIG = {
+    is_post: true,
+    is_page: false,
+    is_home: false,
+    page: '',
+    toc: true,
+    comment: false,
+    ai_text: false,
+    color: false,
+}</script><meta name="generator" content="Hexo 8.0.0"><link rel="alternate" href="/atom.xml" title="Chaierss's Blog" type="application/atom+xml">
+</head><body id="body"><div id="console"><div class="close-btn" onclick="sco.hideConsole()"><i class="solitude fas fa-xmark"></i></div><div class="console-card-group"><div class="console-card-group-right"><div class="console-card tags" onclick="sco.hideConsole()"><div class="card-content"><div class="author-content-item-tips">标签</div><div class="author-content-item-title">寻找感兴趣的领域</div></div><div class="card-tag-cloud"><a href="/tags/Doris/">Doris<sup>1</sup></a><a href="/tags/Linux/">Linux<sup>2</sup></a><a href="/tags/Java/">Java<sup>1</sup></a><a href="/tags/python/">python<sup>1</sup></a><a href="/tags/Oracle/">Oracle<sup>4</sup></a><a href="/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据<sup>1</sup></a><a href="/tags/%E9%87%91%E8%9E%8D/">金融<sup>1</sup></a><a href="/tags/%E5%B7%A5%E5%85%B7%E5%8C%85/">工具包<sup>1</sup></a><a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统<sup>3</sup></a></div></div><div class="console-card history" onclick="sco.hideConsole()"><ul class="card-archive-list"><li class="item"><a href="/archives/2024/09/"><span class="date">2024/09</span><div class="count-group"><span class="count">15</span><span class="unit">篇</span></div></a></li><li class="item"><a href="/archives/"><span class="date">全部文章</span><div class="count-group"><span class="count">15</span><span class="unit">篇</span></div></a></li></ul></div></div></div><div class="button-group"><div class="console-btn-item"><span class="darkmode_switchbutton" onclick="sco.switchDarkMode()" title="昼夜切换"><i class="solitude fas fa-circle-half-stroke"></i></span></div><div class="console-btn-item" id="consoleHideAside"><span class="asideSwitch" onclick="sco.switchHideAside()" title="边栏显示控制"><i class="solitude fas fa-arrows-left-right-to-line"></i></span></div></div><div class="console-mask" onclick="sco.hideConsole()"></div></div><div id="sidebar" style="zoom: 1;"><div id="menu-mask" style="display: none;"></div><div id="sidebar-menus"><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a></div></div></div><span class="sidebar-menu-item-title">功能</span><div class="sidebar-menu-item"><span class="darkmode_switchbutton menu-child" onclick="sco.switchDarkMode()"><i class="solitude fas fa-circle-half-stroke"></i><span>显示模式</span></span></div><span class="sidebar-menu-item-title">标签</span><div class="card-tags"><div class="card-tag-cloud"><a href="/tags/Doris/">Doris<sup>1</sup></a><a href="/tags/Linux/">Linux<sup>2</sup></a><a href="/tags/Java/">Java<sup>1</sup></a><a href="/tags/python/">python<sup>1</sup></a><a href="/tags/Oracle/">Oracle<sup>4</sup></a><a href="/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据<sup>1</sup></a><a href="/tags/%E9%87%91%E8%9E%8D/">金融<sup>1</sup></a><a href="/tags/%E5%B7%A5%E5%85%B7%E5%8C%85/">工具包<sup>1</sup></a><a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统<sup>3</sup></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav class="show" id="nav"><div id="nav-group"><div id="blog_name"><a href="/" title="返回博客主页" id="site-name"><img src="/img/pwa/favicon.ico" alt="Chaierss's Blog"><i class="solitude fas fa-home"></i></a></div><div id="page-name-mask"><div id="page-name"><a id="page-name-text" onclick="sco.toTop()">Linux操作系统概述</a></div></div><div id="menus"></div><div id="nav-left"></div><div id="nav-right"><div class="nav-button" id="nav-totop" onclick="sco.toTop()"><a class="totopbtn"><i class="solitude fas fa-arrow-up"></i><span id="percent">0</span></a></div><div id="toggle-menu"><a class="site-page"><i class="solitude fas fa-bars"></i></a></div></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original" title="该文章为原创文章，注意版权协议">原创</a><span class="post-meta-categories"><a class="post-meta-categories" href="/categories/%E7%9F%A5%E8%AF%86%E7%82%B9/">知识点</a></span><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Linux/"><span class="tags-name tags-punctuation"><i class="solitude fas fa-hashtag"></i>Linux</span></a></div></div></div></div><h1 class="post-title">Linux操作系统概述</h1><div id="post-meta"><div class="meta-secondline"></div></div></div><div class="post-radius-bottom"></div><article class="post-content article-container"><h2 id="前言"><a href="#前言" class="headerlink" title=" 前言 "></a><font color="#798ba9"> 前言 </font></h2><p>Linux操作系统学习笔记</p>
+<span id="more"></span>
+<h2 id="一、操作系统概念与分类"><a href="#一、操作系统概念与分类" class="headerlink" title=" 一、操作系统概念与分类 "></a><font color="#798ba9"> 一、操作系统概念与分类 </font></h2><h2 id="操作系统概念"><a href="#操作系统概念" class="headerlink" title="操作系统概念"></a>操作系统概念</h2><blockquote>
+<p>操作系统（Operating System，简称OS）是<font color="green">管理计算机硬件与软件资源</font>的程序，需要处理如：管理与配置内存、决定系统资源供需的优先次序、控制输入设备与输出设备、操作网络与管理文件系统等基本事务；<br>没有操作系统的机器称之为<font color="red">裸机</font>，不管是开发还是使用都十分不便；<br>操作系统也提供一个让<font color="green">用户与系统交互的操作界面</font>；</p>
+</blockquote>
+<h2 id="操作系统分类"><a href="#操作系统分类" class="headerlink" title="操作系统分类"></a>操作系统分类</h2><p>操作系统发展至今，种类繁多，可以根据应用的不同领域进行划分；</p>
+<blockquote>
+<p>桌面操作系统<br>服务器操作系统<br>嵌入式操作系统<br>移动设备操作系统</p>
+</blockquote>
+<h3 id="桌面操作系统"><a href="#桌面操作系统" class="headerlink" title="桌面操作系统"></a>桌面操作系统</h3><blockquote>
+<p>Mac OS（Apple）、Windows（Microsoft）、Linux三足鼎立</p>
+</blockquote>
+<h3 id="嵌入式操作系统"><a href="#嵌入式操作系统" class="headerlink" title="嵌入式操作系统"></a>嵌入式操作系统</h3><font color="red">嵌入式操作系统</font>：是一种完全嵌入受控器件内部，为特定应用而设计的专用计算机系统；
+> 如uClinux（嵌入式Linux）、WinCE（微软嵌入式、移动计算平台）、PTOS（嵌入式实时操作系统，军事航空领域）等；
+> 在工业、军事、航空等领域使用较多；
+
+### 服务器操作系统
+
+<font color="red">服务器操作系统</font>：一般指的是安装在大型计算机上的操作系统。比如Web服务器、应用服务器和数据库服务器等，是企业IT系统的基础架构平台。
+> 主要分为四大流派：Unix、<font color="red">Linux、Windows Server</font>和Netware；
+
+### 移动设备操作系统
+
+<font color="red">移动设备操作系统</font>：主要应用在智能手机、平板等智能设备上。
+> 主要有Android（谷歌）、ios（苹果）、Symbian（诺基亚）、BlackBerry OS（黑莓）、Windows Mobile（微软）、Harmony（华为鸿蒙）等。
+
+<br>
+
+## <font color="#798ba9"> 二、Linux起源与发展 </font>
+
+<blockquote>
+<p>Unix系统是较早被广泛使用的计算机操作系统之一，由Ken Thompson在AT&amp;T贝尔实验室实现，后续发展中，因开源、版权等问题陷入不断纠纷，衍生出不同Unix版本；<br>1991年芬兰学生Linus Torvalds发布Linux系统第一个版本，遵循GPL协议（通用公共许可证），开源免费；<br>Linux是一个类似Unix的操作系统，Linux的初衷就是要替代Unix，并在功能和用户体验上进行优化，所以Linux模仿了Unix（但并没有抄袭Unix的源码），使得Linux在外观和交互上与Unix非常类似；</p>
+</blockquote>
+<p><br></p>
+<h2 id="三、Linux内核与发行版本"><a href="#三、Linux内核与发行版本" class="headerlink" title=" 三、Linux内核与发行版本 "></a><font color="#798ba9"> 三、Linux内核与发行版本 </font></h2><h2 id="Linux内核（Kernel）"><a href="#Linux内核（Kernel）" class="headerlink" title="Linux内核（Kernel）"></a>Linux内核（Kernel）</h2><blockquote>
+<p><font color="red">操作系统的核心部分简称内核</font>，Linux第一版本独立内核由Linus Torvalds开发实现，约10000行代码；<br>后续Linus Torvalds公开了Linux内核代码，并邀请他人一起完善Linux；现在只有2%的Linux核心代码是由Linus Torvalds自己编写，但是仍然拥有Linux内核且保留了选择新代码和需要合并的新方法的<font color="red">最终裁定权</font>；</p>
+<p><font color="green">Linux操作系统=Linux + Gun软件及系统软件 + 必要的应用程序</font><br>Linux选择企鹅图案作为Logo，其含义是：开发源代码的Linux像企鹅一样为全人类共同所有；</p>
+</blockquote>
+<h2 id="Linux发行版本"><a href="#Linux发行版本" class="headerlink" title="Linux发行版本"></a>Linux发行版本</h2><blockquote>
+<p>Linxu发行版就是由Linux内核与各种常用软件的集合产品，如今全球大约有数百款的Linux发行版本；<br>从大的方面来说，Linux发行版可大致分为<font color="red">个人桌面版</font>和<font color="red">企业服务器版</font>；<br>个人桌面版中，Ubuntu成熟度颇高较受欢迎，而<font color="green">Redhat（红帽系列）</font>及其延申版本<font color="green">（Centos）</font>凭借稳定的性能在企业服务器中占比很大。</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author_group"><div class="post-copyright__author_img"><img class="post-copyright__author_img_front" src="/img/logo.png"></div><div class="post-copyright__author_name">Chaierss</div><div class="post-copyright__author_desc"></div></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div id="quit-box" onclick="RemoveRewardMask()"></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">本文是原创文章，采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans">CC BY-NC-SA 4.0</a>协议，完整转载请注明来自<a href="/">Chaierss's Blog</a></span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Linux/"><span class="tags-punctuation"><i class="solitude fas fa-hashtag"></i>Linux<span class="tagsPageCount">2</span></span></a></div></div></div><nav class="needEndHide pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/58475bac.html"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">ORACLE组合条件实例</div></div></a></div><div class="next-post pull-right"><a href="/posts/d0656d0a.html"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Linux安全防护（一）</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><div class="top-group"><div class="sayhi" id="sayhi" onclick="sco.changeWittyWord()"></div></div></div><div class="avatar"><img alt="头像" src="/img/logo.png"></div><div class="description"></div><div class="bottom-group"><span class="left"><div class="name">Chaierss</div><div class="desc">只有迎风，风筝才能飞得更高。</div></span><div class="social-icons is-center"></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="solitude fas fa-bars"></i><span>文章目录</span></div><div class="toc-content" id="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text"> 前言 </span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E5%BF%B5%E4%B8%8E%E5%88%86%E7%B1%BB"><span class="toc-text"> 一、操作系统概念与分类 </span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%A6%82%E5%BF%B5"><span class="toc-text">操作系统概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%88%86%E7%B1%BB"><span class="toc-text">操作系统分类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A1%8C%E9%9D%A2%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="toc-text">桌面操作系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B5%8C%E5%85%A5%E5%BC%8F%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="toc-text">嵌入式操作系统</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81Linux%E5%86%85%E6%A0%B8%E4%B8%8E%E5%8F%91%E8%A1%8C%E7%89%88%E6%9C%AC"><span class="toc-text"> 三、Linux内核与发行版本 </span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E5%86%85%E6%A0%B8%EF%BC%88Kernel%EF%BC%89"><span class="toc-text">Linux内核（Kernel）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E5%8F%91%E8%A1%8C%E7%89%88%E6%9C%AC"><span class="toc-text">Linux发行版本</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="solitude fas fa-map"></i><span>最近发布</span></div><div class="aside-list"><a class="aside-list-item" href="/posts/1f61ca53.html" title="操作系统页面置换详解"><div class="content"><span class="title" href="/posts/1f61ca53.html" title="操作系统页面置换详解">操作系统页面置换详解</span><span class="categories" href="/posts/1f61ca53.html">知识点</span></div></a><a class="aside-list-item" href="/posts/bc8f3be9.html" title="操作系统死锁银行家算法详解"><div class="content"><span class="title" href="/posts/bc8f3be9.html" title="操作系统死锁银行家算法详解">操作系统死锁银行家算法详解</span><span class="categories" href="/posts/bc8f3be9.html">知识点</span></div></a><a class="aside-list-item" href="/posts/9efe5c67.html" title="操作系统进程深层理解"><div class="content"><span class="title" href="/posts/9efe5c67.html" title="操作系统进程深层理解">操作系统进程深层理解</span><span class="categories" href="/posts/9efe5c67.html">知识点</span></div></a><a class="aside-list-item" href="/posts/bedcf5a.html" title="如何通过贷款计划获取总期数和当期期数"><div class="content"><span class="title" href="/posts/bedcf5a.html" title="如何通过贷款计划获取总期数和当期期数">如何通过贷款计划获取总期数和当期期数</span><span class="categories" href="/posts/bedcf5a.html">财务公司</span></div></a><a class="aside-list-item" href="/posts/cef07fa1.html" title="如何通过日结算余额计算日实时余额"><div class="content"><span class="title" href="/posts/cef07fa1.html" title="如何通过日结算余额计算日实时余额">如何通过日结算余额计算日实时余额</span><span class="categories" href="/posts/cef07fa1.html">财务公司</span></div></a></div></div></div></div></main><footer id="footer"><div id="st-footer"></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div class="copyright">© 2023 - 2025 By<a class="footer-bar-link" href="/" title="Chaierss">Chaierss</a></div><div class="beian-group"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://hexo.io/" title="框架：Hexo">框架：Hexo</a><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/everfu/hexo-theme-solitude" title="主题：Solitude">主题：Solitude</a></div></div><div class="footer-bar-right"></div></div></div><div class="comment-barrage needEndHide"></div></footer></div><div><!-- Critical scripts loaded synchronously--><script src="/js/utils.js?v=3.0.21"></script><script src="/js/main.js?v=3.0.21"></script><!-- Non-critical scripts loaded asynchronously--><script async src="/js/third_party/waterfall.min.js?v=3.0.21"></script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><!-- Feature-specific scripts loaded asynchronously--><script defer src="/js/tw_cn.js?v=3.0.21"></script><!-- UI enhancement scripts--><script defer src="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"></script><!-- Music player scripts--><!-- Cover color processing scripts--><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+utils.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+</script><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!-- Search functionality--><!-- Right menu functionality--><div class="js-pjax"></div></div><!-- pjax--><script>let pjax = null;
+
+function initPjax() {
+    if (typeof Pjax === 'undefined') {
+        console.warn('Pjax is not loaded yet, retrying...');
+        setTimeout(initPjax, 100);
+        return;
+    }
+
+    pjax = new Pjax({
+        elements: 'a:not([target="_blank"])',
+        selectors: ["title","#body-wrap","#site-config","meta[name=\"description\"]",".js-pjax","meta[property^=\"og:\"]","#config-diff",".rs_show",".rs_hide"],
+        cacheBust: false,
+        analytics: false,
+        scrollRestoration: false
+    })
+
+    // 将 pjax 实例挂载到全局
+    window.pjax = pjax;
+
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+        const newScript = document.createElement('script')
+        const content = item.text || item.textContent || item.innerHTML || ""
+        Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+        newScript.appendChild(document.createTextNode(content))
+        item.parentNode.replaceChild(newScript, item)
+    })
+
+    document.addEventListener('pjax:complete', () => {
+        window.refreshFn()
+
+        document.querySelectorAll('script[data-pjax]').forEach(item => {
+            const newScript = document.createElement('script')
+            const content = item.text || item.textContent || item.innerHTML || ""
+            Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+            newScript.appendChild(document.createTextNode(content))
+            item.parentNode.replaceChild(newScript, item)
+        })
+
+        GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+    })
+
+    document.addEventListener('pjax:error', (e) => {
+        if (e.request.status === 404) {
+            pjax.loadUrl('/404.html')
+        }
+    })
+}
+
+// 初始化 Pjax
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPjax);
+} else {
+    initPjax();
+}</script><!-- google adsense--></body></html>
+        <script>
+            const posts = ["posts/1f61ca53.html","posts/bc8f3be9.html","posts/9efe5c67.html","posts/bedcf5a.html","posts/cef07fa1.html","posts/ab365873.html","posts/9932f168.html","posts/6429c849.html","posts/790bb422.html","posts/bfd22fc2.html","posts/c5196243.html","posts/58475bac.html","posts/f24bb437.html","posts/d0656d0a.html","posts/ed202b4f.html"];
+            function toRandomPost() {
+                const randomPost = posts[Math.floor(Math.random() * posts.length)];
+                pjax.loadUrl(GLOBAL_CONFIG.root + randomPost);
+            }
+        </script>

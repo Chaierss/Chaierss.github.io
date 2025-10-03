@@ -1,35 +1,257 @@
-extends includes/layout.pug
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><title>同业拆借详解 | Chaierss's Blog</title><noscript>开启JavaScript才能访问本站哦~</noscript><link rel="icon" href="/img/pwa/favicon.png"><link rel="stylesheet" href="/css/index.css?v=3.0.21"><link rel="canonical" href="https://www.chaierss.top/posts/6429c849.html"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css"><!-- Feature-specific CSS--><!-- aplayer--><!-- swiper--><!-- fancybox ui--><!-- katex--><!-- Open Graph--><meta name="description" content="前言 对同业拆借业务的详细理解 一、什么是同业拆借 同业拆借（放）（inter-banklending、borrowing）指的是银行之间为了解决短期内出现的资金余缺而进行的相互调剂，是具有法人资格的金融机构及经法人授权的非法人金融机构分支机构之间进行短期资金融通的行为，目的在于调剂头寸和临"><!-- pwa--><meta name="apple-mobile-web-app-capable" content="Chaierss's Blog"><meta name="theme-color" content="var(--efu-main)"><meta name="apple-mobile-web-app-status-bar-style" content="var(--efu-main)"><link rel="bookmark" href="/img/pwa/favicon.png"><link rel="apple-touch-icon" href="/img/pwa/favicon.png" sizes="180x180"><script>console.log(' %c Solitude %c ' + '3.0.21' + ' %c https://github.com/everfu/hexo-theme-solitude',
+    'background:#35495e ; padding: 1px; border-radius: 3px 0 0 3px;  color: #fff',
+    'background:#ff9a9a ; padding: 1px; border-radius: 0 3px 3px 0;  color: #fff',
+    'background:unset ; padding: 1px; border-radius: 0 3px 3px 0;  color: #fff')
+</script><script>(()=>{
+        const saveToLocal = {
+            set: function setWithExpiry(key, value, ttl) {
+                if (ttl === 0)
+                    return
+                const now = new Date()
+                const expiryDay = ttl * 86400000
+                const item = {
+                    value: value,
+                    expiry: now.getTime() + expiryDay
+                }
+                localStorage.setItem(key, JSON.stringify(item))
+            },
+            get: function getWithExpiry(key) {
+                const itemStr = localStorage.getItem(key)
 
-block content
-    main.layout#content-inner
-        #post
-            if page.not_cover
-                include includes/widgets/post/postInfo
-            article.post-content#article-container
-                if theme.post_ai.enable && page.ai
-                    include includes/widgets/post/post-ai
-                != page.content
-            include includes/widgets/post/copyright
-            .post-tools-right
-                .tag_share
-                    .post-meta__tag-list
-                        each data in page.tags.data
-                            a(href=url_for(data.path)).post-meta__tags
-                                span.tags-punctuation
-                                    i.solitude.fa-solid.fa-hashtag
-                                    =data.name
-                                    span.tagsPageCount=data.length
-            if theme.google_adsense.enable && !theme.google_adsense.auto_ads && theme.google_adsense.post_content
-                div.google-ads-warp
-                    ins.adsbygoogle(style="display:block; text-align:center; height:284px", data-ad-layout="in-article", data-ad-format="fluid", hide-unfilled="true", data-ad-client=theme.google_adsense.client, data-ad-slot=theme.google_adsense.slot)
-                    script.
-                        (adsbygoogle = window.adsbygoogle || []).push({});
-            if site.posts.length > 1
-                include includes/widgets/post/postNav
-            if theme.related_post.enable
-                != related_posts(page, site.posts)
-            if page.comment
-                - var comment_js = true
-                include includes/widgets/third-party/comments/comment
-        if page.aside
-            include includes/widgets/aside/aside<script>const posts=["posts/ab365873.html","posts/9932f168.html","posts/bfd22fc2.html","posts/c5196243.html","posts/f24bb437.html","posts/d0656d0a.html","posts/ed202b4f.html","posts/1f61ca53.html","posts/bc8f3be9.html","posts/9efe5c67.html","posts/bedcf5a.html","posts/cef07fa1.html","posts/6429c849.html","posts/790bb422.html","posts/58475bac.html"];function toRandomPost(){ pjax.loadUrl(GLOBAL_CONFIG.root+posts[Math.floor(Math.random()*posts.length)]); }</script>
+                if (!itemStr) {
+                    return undefined
+                }
+                const item = JSON.parse(itemStr)
+                const now = new Date()
+
+                if (now.getTime() > item.expiry) {
+                    localStorage.removeItem(key)
+                    return undefined
+                }
+                return item.value
+            }
+        };
+        window.utils = {
+            saveToLocal: saveToLocal,
+            getCSS: (url, id = false) => new Promise((resolve, reject) => {
+              const link = document.createElement('link')
+              link.rel = 'stylesheet'
+              link.href = url
+              if (id) link.id = id
+              link.onerror = reject
+              link.onload = link.onreadystatechange = function() {
+                const loadState = this.readyState
+                if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+                link.onload = link.onreadystatechange = null
+                resolve()
+              }
+              document.head.appendChild(link)
+            }),
+            getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+              const script = document.createElement('script')
+              script.src = url
+              script.async = true
+              script.onerror = reject
+              script.onload = script.onreadystatechange = function() {
+                const loadState = this.readyState
+                if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+                script.onload = script.onreadystatechange = null
+                resolve()
+              }
+
+              Object.keys(attr).forEach(key => {
+                script.setAttribute(key, attr[key])
+              })
+
+              document.head.appendChild(script)
+            }),
+            addGlobalFn: (key, fn, name = false, parent = window) => {
+                const globalFn = parent.globalFn || {}
+                const keyObj = globalFn[key] || {}
+
+                if (name && keyObj[name]) return
+
+                name = name || Object.keys(keyObj).length
+                keyObj[name] = fn
+                globalFn[key] = keyObj
+                parent.globalFn = globalFn
+            },
+            addEventListenerPjax: (ele, event, fn, option = false) => {
+              ele.addEventListener(event, fn, option)
+              utils.addGlobalFn('pjax', () => {
+                  ele.removeEventListener(event, fn, option)
+              })
+            },
+            diffDateFormat: (selector) => {
+                selector.forEach(item => {
+                    const date = new Date(item.getAttribute('datetime') || item.textContent);
+                    item.textContent = (date.getMonth() + 1).toString()+'/'+date.getDate().toString();
+                });
+            },
+        }
+    })()</script><!-- theme--><script>initTheme = () => {
+    let isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const cachedMode = utils.saveToLocal.get('theme');
+    if (cachedMode === undefined) {
+        const nowMode =
+            isDarkMode ? 'dark' : 'light'
+        document.documentElement.setAttribute('data-theme', nowMode);
+    } else {
+        document.documentElement.setAttribute('data-theme', cachedMode);
+    }
+    typeof rm === 'object' && rm.mode(cachedMode === 'dark' && isDarkMode)
+}
+initTheme()</script><script>const GLOBAL_CONFIG = {
+    root: '/',
+    algolia: undefined,
+    localsearch: undefined,
+    runtime: '2023-04-20 00:00:00',
+    lazyload: {
+        enable: false,
+        error: '/img/error_load.avif'
+    },
+    copyright: false,
+    highlight: {"limit":200,"expand":true,"copy":true,"syntax":"highlight.js"},
+    randomlink: false,
+    lang: {"theme":{"dark":"已切换至深色模式","light":"已切换至浅色模式"},"copy":{"success":"复制成功","error":"复制失败"},"backtop":"返回顶部","time":{"day":"天前","hour":"小时前","just":"刚刚","min":"分钟前","month":"个月前"},"day":" 天","f12":"开发者模式已打开，请遵循GPL协议。","totalk":"无需删除空行，直接输入评论即可"},
+    aside: {
+        state: {
+            morning: "✨ 早上好，新的一天开始了",
+            noon: "🍲 午餐时间",
+            afternoon: "🌞 下午好",
+            night: "早点休息",
+            goodnight: "晚安 😴",
+        },
+        witty_words: [],
+        witty_comment: {
+            prefix: '好久不见，',
+            back: '欢迎再次回来，',
+        },
+    },
+    covercolor: {
+        enable: false
+    },
+    comment: false,
+    lightbox: 'null',
+    right_menu: false,
+    translate: {"translateDelay":0,"defaultEncoding":2},
+    lure: false,
+    expire: false,
+};</script><script id="config-diff">var PAGE_CONFIG = {
+    is_post: true,
+    is_page: false,
+    is_home: false,
+    page: '',
+    toc: true,
+    comment: false,
+    ai_text: false,
+    color: false,
+}</script><meta name="generator" content="Hexo 8.0.0"><link rel="alternate" href="/atom.xml" title="Chaierss's Blog" type="application/atom+xml">
+</head><body id="body"><div id="console"><div class="close-btn" onclick="sco.hideConsole()"><i class="solitude fas fa-xmark"></i></div><div class="console-card-group"><div class="console-card-group-right"><div class="console-card tags" onclick="sco.hideConsole()"><div class="card-content"><div class="author-content-item-tips">标签</div><div class="author-content-item-title">寻找感兴趣的领域</div></div><div class="card-tag-cloud"><a href="/tags/Doris/">Doris<sup>1</sup></a><a href="/tags/Linux/">Linux<sup>2</sup></a><a href="/tags/Java/">Java<sup>1</sup></a><a href="/tags/python/">python<sup>1</sup></a><a href="/tags/Oracle/">Oracle<sup>4</sup></a><a href="/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据<sup>1</sup></a><a href="/tags/%E9%87%91%E8%9E%8D/">金融<sup>1</sup></a><a href="/tags/%E5%B7%A5%E5%85%B7%E5%8C%85/">工具包<sup>1</sup></a><a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统<sup>3</sup></a></div></div><div class="console-card history" onclick="sco.hideConsole()"><ul class="card-archive-list"><li class="item"><a href="/archives/2024/09/"><span class="date">2024/09</span><div class="count-group"><span class="count">15</span><span class="unit">篇</span></div></a></li><li class="item"><a href="/archives/"><span class="date">全部文章</span><div class="count-group"><span class="count">15</span><span class="unit">篇</span></div></a></li></ul></div></div></div><div class="button-group"><div class="console-btn-item"><span class="darkmode_switchbutton" onclick="sco.switchDarkMode()" title="昼夜切换"><i class="solitude fas fa-circle-half-stroke"></i></span></div><div class="console-btn-item" id="consoleHideAside"><span class="asideSwitch" onclick="sco.switchHideAside()" title="边栏显示控制"><i class="solitude fas fa-arrows-left-right-to-line"></i></span></div></div><div class="console-mask" onclick="sco.hideConsole()"></div></div><div id="sidebar" style="zoom: 1;"><div id="menu-mask" style="display: none;"></div><div id="sidebar-menus"><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a></div></div></div><span class="sidebar-menu-item-title">功能</span><div class="sidebar-menu-item"><span class="darkmode_switchbutton menu-child" onclick="sco.switchDarkMode()"><i class="solitude fas fa-circle-half-stroke"></i><span>显示模式</span></span></div><span class="sidebar-menu-item-title">标签</span><div class="card-tags"><div class="card-tag-cloud"><a href="/tags/Doris/">Doris<sup>1</sup></a><a href="/tags/Linux/">Linux<sup>2</sup></a><a href="/tags/Java/">Java<sup>1</sup></a><a href="/tags/python/">python<sup>1</sup></a><a href="/tags/Oracle/">Oracle<sup>4</sup></a><a href="/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/">大数据<sup>1</sup></a><a href="/tags/%E9%87%91%E8%9E%8D/">金融<sup>1</sup></a><a href="/tags/%E5%B7%A5%E5%85%B7%E5%8C%85/">工具包<sup>1</sup></a><a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统<sup>3</sup></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav class="show" id="nav"><div id="nav-group"><div id="blog_name"><a href="/" title="返回博客主页" id="site-name"><img src="/img/pwa/favicon.ico" alt="Chaierss's Blog"><i class="solitude fas fa-home"></i></a></div><div id="page-name-mask"><div id="page-name"><a id="page-name-text" onclick="sco.toTop()">同业拆借详解</a></div></div><div id="menus"></div><div id="nav-left"></div><div id="nav-right"><div class="nav-button" id="nav-totop" onclick="sco.toTop()"><a class="totopbtn"><i class="solitude fas fa-arrow-up"></i><span id="percent">0</span></a></div><div id="toggle-menu"><a class="site-page"><i class="solitude fas fa-bars"></i></a></div></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original" title="该文章为原创文章，注意版权协议">原创</a><span class="post-meta-categories"><a class="post-meta-categories" href="/categories/%E8%B4%A2%E5%8A%A1%E5%85%AC%E5%8F%B8/">财务公司</a></span><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E9%87%91%E8%9E%8D/"><span class="tags-name tags-punctuation"><i class="solitude fas fa-hashtag"></i>金融</span></a></div></div></div></div><h1 class="post-title">同业拆借详解</h1><div id="post-meta"><div class="meta-secondline"></div></div></div><div class="post-radius-bottom"></div><article class="post-content article-container"><h2 id="前言"><a href="#前言" class="headerlink" title=" 前言 "></a><font color="#798ba9"> 前言 </font></h2><p>对同业拆借业务的详细理解</p>
+<span id="more"></span>
+<h2 id="一、什么是同业拆借"><a href="#一、什么是同业拆借" class="headerlink" title=" 一、什么是同业拆借 "></a><font color="#798ba9"> 一、什么是同业拆借 </font></h2><blockquote>
+<p>同业拆借（放）（inter-banklending、borrowing）指的是银行之间为了解决短期内出现的资金余缺而进行的相互调剂，是具有法人资格的金融机构及经法人授权的非法人金融机构分支机构之间进行<font color="red">短期资金融通的行为，目的在于调剂头寸和临时性资金余缺。</font></p>
+</blockquote>
+<p>发生在一个工作日结束后银行对账目进行结算时发现资金出现多于或短缺的情况下，为了使第二天的工作照常进行或对富余款项进行利用。</p>
+<p>同业拆借（放）的主要交易对象为<font color="red">超额准备金.</font></p>
+<ul>
+<li>拆入行向拆出行开出本票；</li>
+<li>拆出行则对拆入行开出中央银行存款支票即超额准备金。</li>
+<li>对资金贷出者而言是拆放，对拆入者而言则是拆借。同业拆借发生量大，交易频繁，对市场反应敏感，能作为一国银行利率的中间指标。</li>
+</ul>
+<p><br></p>
+<h2 id="二、同业拆借的特点是什么"><a href="#二、同业拆借的特点是什么" class="headerlink" title=" 二、同业拆借的特点是什么 "></a><font color="#798ba9"> 二、同业拆借的特点是什么 </font></h2><p>同业拆借，同业拆借市场具有以下特点：</p>
+<ol>
+<li>融通资金的期限一般比较短；</li>
+<li>参与拆借的机构基本上是在中央银行开立存款帐户，交易资金主要是该帐户上的多余资金；</li>
+<li>同业拆借资金主要用于短期、临时性需要；</li>
+<li>同业拆借基本上是<font color="red">信用拆借</font>。同业拆借可以使商业银行在不用保持大量超额准备金的前提下，就能满足存款支付的需要。1996年1月3日，我国建立起了全国统一的同业拆借市场并开始试运行。</li>
+</ol>
+<p><br></p>
+<h2 id="三、同业拆借有哪些原则"><a href="#三、同业拆借有哪些原则" class="headerlink" title=" 三、同业拆借有哪些原则 "></a><font color="#798ba9"> 三、同业拆借有哪些原则 </font></h2><p>商业银行进行同业拆借活动时，必须遵循以下原则：</p>
+<h2 id="自主性原则"><a href="#自主性原则" class="headerlink" title="自主性原则"></a>自主性原则</h2><blockquote>
+<p>同业拆借是一种信用行为，在进行拆借资金交易时，必须承认和尊重市场主体（交易双方）的权利和义务，严格遵循自愿协商、平等互利、自主成交的原则，维护市场经营者的合法权益，形成平等竞争的有序环境，保证资金的合理流动。</p>
+</blockquote>
+<h2 id="偿还性原则"><a href="#偿还性原则" class="headerlink" title="偿还性原则"></a>偿还性原则</h2><ul>
+<li>对拆出方来说，由于拆出的是本行暂时闲置不用的资金，有一定期限限制，因此必须按期收回。</li>
+<li>对拆入方来说，拆入资金只是拥有一定期限内的资金使用权，并不拥有长期使用的权利，也不改变资金的所有权，因而必须到期如数偿还。</li>
+</ul>
+<h2 id="短期性原则"><a href="#短期性原则" class="headerlink" title="短期性原则"></a>短期性原则</h2><blockquote>
+<p>同业拆借的典型特征之一是期限短，属一种短期融资。</p>
+<ul>
+<li>从拆出方看，拆出的资金是银行的暂时闲置的资金，从数量和期限上都具有不确定性，因而其资金运用必须是短期的。</li>
+<li>就拆入方而言，向同业拆入资金主要是解决临时性储备不足的资金需要，如因清算联行汇差而出现的临时性头寸不足和头寸调度方面的突发性资金需求等。因此拆入方也应坚持拆入资金的短期性原则，一旦贷款收回或存款增加，就应立即归还这种借款。</li>
+</ul>
+</blockquote>
+<p><br></p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><pre><code>https://www.fabao365.com/zhaiwu/92476/
+</code></pre></article><div class="post-copyright"><div class="post-copyright__author_group"><div class="post-copyright__author_img"><img class="post-copyright__author_img_front" src="/img/logo.png"></div><div class="post-copyright__author_name">Chaierss</div><div class="post-copyright__author_desc"></div></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div id="quit-box" onclick="RemoveRewardMask()"></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">本文是原创文章，采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans">CC BY-NC-SA 4.0</a>协议，完整转载请注明来自<a href="/">Chaierss's Blog</a></span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E9%87%91%E8%9E%8D/"><span class="tags-punctuation"><i class="solitude fas fa-hashtag"></i>金融<span class="tagsPageCount">1</span></span></a></div></div></div><nav class="needEndHide pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/9932f168.html"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">大数据导论</div></div></a></div><div class="next-post pull-right"><a href="/posts/790bb422.html"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">关于特定节假日导致次日(工作日)分类错误的问题处理</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><div class="top-group"><div class="sayhi" id="sayhi" onclick="sco.changeWittyWord()"></div></div></div><div class="avatar"><img alt="头像" src="/img/logo.png"></div><div class="description"></div><div class="bottom-group"><span class="left"><div class="name">Chaierss</div><div class="desc">只有迎风，风筝才能飞得更高。</div></span><div class="social-icons is-center"></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="solitude fas fa-bars"></i><span>文章目录</span></div><div class="toc-content" id="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text"> 前言 </span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AF%E5%90%8C%E4%B8%9A%E6%8B%86%E5%80%9F"><span class="toc-text"> 一、什么是同业拆借 </span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%90%8C%E4%B8%9A%E6%8B%86%E5%80%9F%E7%9A%84%E7%89%B9%E7%82%B9%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text"> 二、同业拆借的特点是什么 </span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%90%8C%E4%B8%9A%E6%8B%86%E5%80%9F%E6%9C%89%E5%93%AA%E4%BA%9B%E5%8E%9F%E5%88%99"><span class="toc-text"> 三、同业拆借有哪些原则 </span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E4%B8%BB%E6%80%A7%E5%8E%9F%E5%88%99"><span class="toc-text">自主性原则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%81%BF%E8%BF%98%E6%80%A7%E5%8E%9F%E5%88%99"><span class="toc-text">偿还性原则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9F%AD%E6%9C%9F%E6%80%A7%E5%8E%9F%E5%88%99"><span class="toc-text">短期性原则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="toc-text">参考文献</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="solitude fas fa-map"></i><span>最近发布</span></div><div class="aside-list"><a class="aside-list-item" href="/posts/1f61ca53.html" title="操作系统页面置换详解"><div class="content"><span class="title" href="/posts/1f61ca53.html" title="操作系统页面置换详解">操作系统页面置换详解</span><span class="categories" href="/posts/1f61ca53.html">知识点</span></div></a><a class="aside-list-item" href="/posts/bc8f3be9.html" title="操作系统死锁银行家算法详解"><div class="content"><span class="title" href="/posts/bc8f3be9.html" title="操作系统死锁银行家算法详解">操作系统死锁银行家算法详解</span><span class="categories" href="/posts/bc8f3be9.html">知识点</span></div></a><a class="aside-list-item" href="/posts/9efe5c67.html" title="操作系统进程深层理解"><div class="content"><span class="title" href="/posts/9efe5c67.html" title="操作系统进程深层理解">操作系统进程深层理解</span><span class="categories" href="/posts/9efe5c67.html">知识点</span></div></a><a class="aside-list-item" href="/posts/bedcf5a.html" title="如何通过贷款计划获取总期数和当期期数"><div class="content"><span class="title" href="/posts/bedcf5a.html" title="如何通过贷款计划获取总期数和当期期数">如何通过贷款计划获取总期数和当期期数</span><span class="categories" href="/posts/bedcf5a.html">财务公司</span></div></a><a class="aside-list-item" href="/posts/cef07fa1.html" title="如何通过日结算余额计算日实时余额"><div class="content"><span class="title" href="/posts/cef07fa1.html" title="如何通过日结算余额计算日实时余额">如何通过日结算余额计算日实时余额</span><span class="categories" href="/posts/cef07fa1.html">财务公司</span></div></a></div></div></div></div></main><footer id="footer"><div id="st-footer"></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div class="copyright">© 2023 - 2025 By<a class="footer-bar-link" href="/" title="Chaierss">Chaierss</a></div><div class="beian-group"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://hexo.io/" title="框架：Hexo">框架：Hexo</a><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/everfu/hexo-theme-solitude" title="主题：Solitude">主题：Solitude</a></div></div><div class="footer-bar-right"></div></div></div><div class="comment-barrage needEndHide"></div></footer></div><div><!-- Critical scripts loaded synchronously--><script src="/js/utils.js?v=3.0.21"></script><script src="/js/main.js?v=3.0.21"></script><!-- Non-critical scripts loaded asynchronously--><script async src="/js/third_party/waterfall.min.js?v=3.0.21"></script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><!-- Feature-specific scripts loaded asynchronously--><script defer src="/js/tw_cn.js?v=3.0.21"></script><!-- UI enhancement scripts--><script defer src="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"></script><!-- Music player scripts--><!-- Cover color processing scripts--><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+utils.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+</script><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!-- Search functionality--><!-- Right menu functionality--><div class="js-pjax"></div></div><!-- pjax--><script>let pjax = null;
+
+function initPjax() {
+    if (typeof Pjax === 'undefined') {
+        console.warn('Pjax is not loaded yet, retrying...');
+        setTimeout(initPjax, 100);
+        return;
+    }
+
+    pjax = new Pjax({
+        elements: 'a:not([target="_blank"])',
+        selectors: ["title","#body-wrap","#site-config","meta[name=\"description\"]",".js-pjax","meta[property^=\"og:\"]","#config-diff",".rs_show",".rs_hide"],
+        cacheBust: false,
+        analytics: false,
+        scrollRestoration: false
+    })
+
+    // 将 pjax 实例挂载到全局
+    window.pjax = pjax;
+
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+        const newScript = document.createElement('script')
+        const content = item.text || item.textContent || item.innerHTML || ""
+        Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+        newScript.appendChild(document.createTextNode(content))
+        item.parentNode.replaceChild(newScript, item)
+    })
+
+    document.addEventListener('pjax:complete', () => {
+        window.refreshFn()
+
+        document.querySelectorAll('script[data-pjax]').forEach(item => {
+            const newScript = document.createElement('script')
+            const content = item.text || item.textContent || item.innerHTML || ""
+            Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+            newScript.appendChild(document.createTextNode(content))
+            item.parentNode.replaceChild(newScript, item)
+        })
+
+        GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+    })
+
+    document.addEventListener('pjax:error', (e) => {
+        if (e.request.status === 404) {
+            pjax.loadUrl('/404.html')
+        }
+    })
+}
+
+// 初始化 Pjax
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPjax);
+} else {
+    initPjax();
+}</script><!-- google adsense--></body></html>
+        <script>
+            const posts = ["posts/1f61ca53.html","posts/bc8f3be9.html","posts/9efe5c67.html","posts/bedcf5a.html","posts/cef07fa1.html","posts/ab365873.html","posts/9932f168.html","posts/6429c849.html","posts/790bb422.html","posts/bfd22fc2.html","posts/c5196243.html","posts/58475bac.html","posts/f24bb437.html","posts/d0656d0a.html","posts/ed202b4f.html"];
+            function toRandomPost() {
+                const randomPost = posts[Math.floor(Math.random() * posts.length)];
+                pjax.loadUrl(GLOBAL_CONFIG.root + randomPost);
+            }
+        </script>
